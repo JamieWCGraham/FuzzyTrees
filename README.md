@@ -1,5 +1,4 @@
 # FuzzyTrees
-
 FuzzyTrees is a machine-learning application built in Python and Hex that combines fuzzy-matching techniques with a random forest classifier to do approximate matches on records from separate tables/data sources. In the original use case, this was to find duplicate vet practice records that were flowing in through DBT from vso and vss data sources all the way into our integrated online practice table in our core DBT layer. Duplicates within our infrastructure can compromise the integrity of downstream reporting and analytics, this piece of work represents an automation tool for identifying duplicates, as well as performing a general fuzzy-matching functionality.
 
 ![image](https://github.com/user-attachments/assets/14acbb26-73f4-4ffd-b4ec-5240f2a0896e)
