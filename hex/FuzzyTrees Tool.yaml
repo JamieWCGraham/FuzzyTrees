@@ -1,0 +1,801 @@
+schemaVersion: 3
+meta:
+  sourceVersionId: 0503035b-25c5-4865-827d-3179c69b3304 # DO NOT CHANGE - Hex uses this to match up project versions when reimporting the file
+  description: The FuzzyTrees tool is a self-serve fuzzy practice matching tool. This is a machine-learning application that uses fuzzy-matching techniques and a random forest classifier to find approximate matches on records from separate data sources. It computes similarity metrics on shared fields and uses them for feature engineering.
+  projectId: 5f3b3a1d-8dd2-4270-810e-0c84aabdd482 # DO NOT CHANGE - Unique ID of the project from which this file was generated
+  title: FuzzyTrees Tool
+  timezone: null
+  appTheme: SYS_PREF
+  codeLanguage: PYTHON
+  status: null
+  categories: []
+  castDecimalsDefault: true
+  logicQueryCacheTimeout: null
+  publishedQueryCacheTimeout: null
+  hexType: PROJECT
+  allowExecutionReordering: true
+  prerunApp: false
+  cachePublishedAppState: true
+  refreshStalePublishedApp: false
+  autoRerunApp: true
+projectAssets:
+  dataConnections: []
+  envVars: []
+  secrets: []
+sharedAssets:
+  secrets: []
+  vcsPackages: []
+  dataConnections: []
+  externalFileIntegrations: []
+cells:
+  - cellType: MARKDOWN
+    cellId: ab5b4e4a-2653-416b-b64b-b81ebe85b473 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |+
+        <h4> Instructions (CSV) </h4>
+
+        Above, please input two CSV's:
+
+        1. The first csv contains the practices you want to find matches for
+        2. The second csv contains the larger set of practices you want to match to. 
+
+        Both CSVs should be structured as below, with the columns in the following order: clinic id, name, city, address, and zip. It does not matter how you name the column headers, just as long as they are in the correct order of id, name, city, address, and zip for both CSVs.
+
+        <hr>
+
+        <img src="/api/v1/file/e0cba501-108f-4831-901e-e207b09422d4" width="500"  />
+
+        <hr>
+
+
+        <!-- <h4> Instructions (Snowflake Tables) </h4> -->
+
+  - cellType: INPUT
+    cellId: 5c04055c-9b4f-4a5b-92c3-c887d1d3f38d # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Table name 1
+    config:
+      inputType: TEXT_INPUT
+      name: table_name_1
+      outputType: STRING
+      options: null
+      defaultValue: ""
+  - cellType: INPUT
+    cellId: 085bcd2a-dfb1-43d4-b9c3-dbca8515f42e # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Table name 2
+    config:
+      inputType: TEXT_INPUT
+      name: table_name_2
+      outputType: STRING
+      options: null
+      defaultValue: ""
+  - cellType: CODE
+    cellId: 3e2abc18-9c71-4a90-bc2f-9e5ce9026512 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        csv1 = pd.DataFrame()
+        csv2 = pd.DataFrame()
+  - cellType: INPUT
+    cellId: 6de2c4c9-0c01-4c49-98cf-58b7c257b320 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: CSV1
+    config:
+      inputType: FILE_UPLOAD
+      name: csv1
+      outputType: DATA_FRAME
+      options: null
+      defaultValue:
+        id: 6b2b3656-0c14-4b05-ac7d-ff6436907c7a
+        name: 20240509_otto_for_matching.csv
+        type: FILE
+  - cellType: INPUT
+    cellId: 0f8837be-aaf7-46f3-a4fa-c606db8ff3b7 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: CSV2
+    config:
+      inputType: FILE_UPLOAD
+      name: csv2
+      outputType: DATA_FRAME
+      options: null
+      defaultValue:
+        id: 09f26345-93ad-4cef-9bba-c0465c0df810
+        name: salesforce_try_2.csv
+        type: FILE
+  - cellType: INPUT
+    cellId: dca8ae19-79ba-4d05-ab91-7bea5587870d # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Fuzzy match now
+    config:
+      inputType: BUTTON
+      name: fuzzy_match_now
+      outputType: BOOLEAN
+      options: null
+      defaultValue: null
+  - cellType: MARKDOWN
+    cellId: a8b4997e-7a54-48ae-a91e-ffffd2d8c53e # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |
+        <!-- <img src="/api/v1/file/1742cc48-f8b0-478c-84c0-41c2b0cc139c" width="900" height="200"  /> -->
+
+        <img src="/api/v1/file/4782f134-ff0d-4d41-995b-fb05998a0271"  width="300" height="200" />
+  - cellType: CODE
+    cellId: 824a48c5-7c97-46f1-8d62-954104bc8622 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Csv1 original
+    config:
+      source: |-
+        if fuzzy_match_now: 
+            csv1_original = csv1.copy(deep=True)
+            csv2_original = csv2.copy(deep=True) 
+  - cellType: CODE
+    cellId: b09ae394-2fab-444f-aa56-7a17a211d3d7 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |
+        if fuzzy_match_now: 
+
+            csv1 = csv1.dropna()
+            csv2 = csv2.dropna()
+  - cellType: CODE
+    cellId: c32d8303-1d94-420c-9ff2-da435cb04cb3 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |+
+        if fuzzy_match_now: 
+
+            csv1 = csv1.iloc[:,0:5]
+            columns = ["id","name","city","address","zip"]
+            # Renaming columns by index
+            new_column_names = {csv1.columns[i]: str(columns[i]) for i in range(len(csv1.columns))}
+            csv1 = csv1.rename(columns=new_column_names).reset_index(drop=True)
+
+  - cellType: CODE
+    cellId: ae8486da-af47-49e0-9ee6-3a4177c598b0 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Standardize CSVs
+    config:
+      source: |+
+        if fuzzy_match_now: 
+
+            csv2 = csv2.iloc[:,0:5]
+            columns = ["id2","name2","city2","address2","zip2"]
+            # Renaming columns by index
+            new_column_names = {csv2.columns[i]: str(columns[i]) for i in range(len(csv2.columns))}
+            csv2 = csv2.rename(columns=new_column_names).reset_index(drop=True)
+
+  - cellType: CODE
+    cellId: a18e6e8e-fb9a-49ef-b7f7-c79bf72462f5 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        # Function to check if a float has all decimal places as .0
+        def is_decimal_float(value):
+            return value.is_integer()
+
+        def update_table(df):
+        # Iterate over columns
+            for col in df.columns:
+                # Check if all values in the column are float and have decimal places as .0
+                if df[col].dtype == 'float64' and all(is_decimal_float(value) for value in df[col]):
+                    # Convert the column to integer
+                    df[col] = df[col].astype(int)
+
+            return df
+  - cellType: CODE
+    cellId: 2455f289-4bb3-4945-8e12-4a856b44e022 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        if fuzzy_match_now: 
+
+            csv1 = update_table(csv1)
+            csv2 = update_table(csv2)
+  - cellType: CODE
+    cellId: 82ffc3de-2beb-4737-a79b-283efebced2c # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        # if train_random_forest:
+        !pip install jellyfish
+        import jellyfish as j
+  - cellType: CODE
+    cellId: fc57d788-7457-4a00-8e61-ba4050827cc7 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Iris Classification
+    config:
+      source: |
+        import pandas as pd
+        import matplotlib.pyplot as plt 
+        import numpy as np 
+        from sklearn.datasets import load_iris
+        from sklearn.ensemble import RandomForestClassifier
+        from sklearn.model_selection import train_test_split
+        from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix, roc_curve, auc
+        import fuzzywuzzy as f
+        from fuzzywuzzy import fuzz
+        from joblib import dump, load
+        import time
+        import sys
+  - cellType: CODE
+    cellId: c67429a7-4dad-48c8-a5f4-da57bfb0d42d # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel:  Load Data
+    config:
+      source: |
+        if fuzzy_match_now: 
+
+            # Load the model from the file
+            random_forest_classifier = load('random_forest_model.joblib')
+  - cellType: CODE
+    cellId: e3c93c3f-72ed-4087-a880-a4568ce5ec31 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: define Levenshtein and Jaro Winkler Distances
+    config:
+      source: |-
+        def jaro_winkler_distance(str1,str2):
+            score = j.jaro_winkler_similarity(str1,str2)
+            return score
+
+        def levenshtein_distance(str1,str2):
+            score = f.fuzz.ratio(str1, str2)/100
+            return score
+  - cellType: CODE
+    cellId: 0797e2c8-9ea8-44f6-b7e9-40ead0850658 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Generate Feature Vectors
+    config:
+      source: |
+        
+        def generate_feature_vectors(columns_features,pair_data,distance_function):
+            for jj in range(len(columns_features)):
+                # print("Creating feature vector for: " + columns_features[jj])
+                distances = np.zeros((len(pair_data),1))
+                for ii in range(len(pair_data)):
+                    distance = distance_function(str(pair_data.iloc[ii,jj+1]),str(pair_data.iloc[ii,jj+6]))
+                    distances[ii] = (distance)
+                pair_data[columns_features[jj]] = distances
+            return pair_data
+  - cellType: CODE
+    cellId: f9c5a5fa-2717-4c4c-b2f5-a776cd63f376 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |+
+        lev_features = ['name_lev_dist','city_lev_dist','address_lev_dist','zip_lev_dist'] 
+        jaro_features = ['name_jaro_dist','city_jaro_dist','address_jaro_dist','zip_jaro_dist']
+
+  - cellType: CODE
+    cellId: d8ff11c6-467f-4e06-aedd-cd79caae7f67 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: match_table = pd.DataFrame()
+  - cellType: CODE
+    cellId: 91c2bd82-3b6d-4f51-b07e-f8d444f39759 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |+
+        
+
+        def update_loading_bar(current, total):
+            """
+            Updates the loading bar in the console.
+
+            Parameters:
+            - current: the current index (current progress).
+            - total: the total number of iterations (total progress to be made).
+
+            The function calculates the percentage of completion and updates the loading bar accordingly.
+            """
+            bar_length = 50  # You can adjust the length of the loading bar here
+            progress = float(current) / total
+            block = int(round(bar_length * progress))
+            bar = "\rProgress: [{0}] {1}%".format("#" * block + "-" * (bar_length - block), round(progress * 100, 2))
+            sys.stdout.write(bar)
+            sys.stdout.flush()
+
+  - cellType: CODE
+    cellId: c2724baa-646d-41ff-a274-081083bc4801 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        if fuzzy_match_now:
+            print("Running FuzzyTrees..")
+  - cellType: CODE
+    cellId: 8c602356-7a20-438d-a7ee-5fe67e9b6af1 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        
+        if fuzzy_match_now:
+            print("Running FuzzyTrees..")
+            start_time = time.time()  # capture start time
+            total_vso_ids = len(csv2)
+            match_table = pd.DataFrame(np.zeros((len(csv1),11)),columns=['source_1_id', 'source_1_name', 'source_1_city', 'source_1_address', 'source_1_zip', 'source_2_id', 'source_2_name', 'source_2_city', 'source_2_address', 'source_2_zip','total_score'])
+            table_idx = 0
+            # Specify data types
+            data_types = {
+                'id': int,
+                'name': object,
+                'city': object,
+                'address': object,
+                'zip': int
+            }
+
+            for ii in range(len(csv1)):
+                update_loading_bar(ii, len(csv1)-1)
+                tmp_csv1_df = csv1.iloc[ii,:]
+                # Repeat the row N times
+                duplicates = pd.concat([tmp_csv1_df]*total_vso_ids, axis=1).transpose()
+                # Append duplicates to the original DataFrame
+                tmp_csv1_df = pd.concat([duplicates], ignore_index=True)
+
+                tmp_csv1_df = tmp_csv1_df.astype(data_types)
+                tmp_merged_df_original = pd.concat([tmp_csv1_df,csv2.reset_index(drop=True)],axis=1)
+                tmp_merged_df = tmp_merged_df_original.copy(deep=True)
+
+                tmp_merged_df.loc[:, tmp_merged_df.dtypes == 'object'] = tmp_merged_df.select_dtypes(['object']).apply(lambda x: x.str.lower())
+                tmp_merged_df.loc[:, tmp_merged_df.dtypes == 'object'] = tmp_merged_df.select_dtypes(['object']).apply(lambda x: x.str.replace('[ ,-]', '', regex=True))
+                tmp_merged_df.loc[:, tmp_merged_df.dtypes == 'object'] = tmp_merged_df.select_dtypes(['object']).apply(lambda x: x.str.replace('[&]', 'and', regex=True))
+
+
+                lev_features = ['name_lev_dist','city_lev_dist','address_lev_dist','zip_lev_dist'] 
+                jaro_features = ['name_jaro_dist','city_jaro_dist','address_jaro_dist','zip_jaro_dist']
+                tmp_merged_df = generate_feature_vectors(lev_features,tmp_merged_df,levenshtein_distance)
+                tmp_merged_df = generate_feature_vectors(jaro_features,tmp_merged_df,jaro_winkler_distance)
+                columns_features = ['name_lev_dist','city_lev_dist','address_lev_dist','zip_lev_dist','name_jaro_dist','city_jaro_dist','address_jaro_dist','zip_jaro_dist']
+                tmp_merged_df['total_score'] = tmp_merged_df.loc[:,columns_features].sum(axis=1)
+                columns_features = ['name_lev_dist','city_lev_dist','address_lev_dist','zip_lev_dist','name_jaro_dist','city_jaro_dist','address_jaro_dist','zip_jaro_dist','total_score']
+
+                feature_df = tmp_merged_df.loc[:,columns_features]
+                X = np.array(feature_df)  # Features
+
+                y_pred = random_forest_classifier.predict(X)
+
+                indices = np.where(y_pred == 1)[0]
+                if len(indices) != 0:
+                    tmp_df2 = tmp_merged_df.loc[indices,columns_features]
+                    tmp_df2['summed'] = tmp_df2.sum(axis=1)
+                    max_index = tmp_df2['summed'].idxmax()
+
+                    match_table.iloc[table_idx,0:10] = tmp_merged_df_original.iloc[int(max_index),0:10]
+                    match_table.iloc[table_idx,10] = tmp_merged_df.loc[int(max_index),'total_score']
+                    table_idx += 1    
+                else:
+                    pass  
+
+            match_table = match_table.loc[~(match_table==0).all(axis=1)]
+            end_time = time.time()  # capture end time
+            elapsed_time_seconds = end_time - start_time  # total time in seconds
+            elapsed_time_minutes = elapsed_time_seconds / 60  # convert seconds to minutes
+
+            print(f"\n Elapsed time: {np.round(elapsed_time_minutes,2)} minutes")
+        #     # match_table = match_table[match_table['total_score']>7]
+            match_table = update_table(match_table)
+  - cellType: TABLE_DISPLAY
+    cellId: 9902257b-4ce9-44d6-a433-eacea34b5b03 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: Fuzzy Matched Practices
+    config:
+      dataFrameVariableName: match_table
+      resultVariable: table_result
+      tableDisplayConfig:
+        pageSize: 50
+        height: null
+        hideIcons: false
+        hideIndex: false
+        defaultSortColumn: null
+        defaultSortIndexColumn: null
+        defaultSortDirection: ASC
+        conditionalFormatting: null
+        calcs: null
+        filters: null
+        columnProperties:
+          - originalName: row-index-0
+            renameTo: null
+            size: 24
+            wrapText: null
+            displayFormat: null
+          - originalName: source_1_address
+            renameTo: null
+            size: 203
+            wrapText: null
+            displayFormat: null
+          - originalName: source_1_city
+            renameTo: null
+            size: 130
+            wrapText: null
+            displayFormat: null
+          - originalName: source_1_id
+            renameTo: null
+            size: 121
+            wrapText: null
+            displayFormat: null
+          - originalName: source_1_name
+            renameTo: null
+            size: 252
+            wrapText: null
+            displayFormat: null
+          - originalName: source_1_zip
+            renameTo: null
+            size: 127
+            wrapText: null
+            displayFormat: null
+          - originalName: source_2_address
+            renameTo: null
+            size: 203
+            wrapText: null
+            displayFormat: null
+          - originalName: source_2_city
+            renameTo: null
+            size: 130
+            wrapText: null
+            displayFormat: null
+          - originalName: source_2_id
+            renameTo: null
+            size: 121
+            wrapText: null
+            displayFormat: null
+          - originalName: source_2_name
+            renameTo: null
+            size: 252
+            wrapText: null
+            displayFormat: null
+          - originalName: source_2_zip
+            renameTo: null
+            size: 144
+            wrapText: null
+            displayFormat: null
+          - originalName: total_score
+            renameTo: null
+            size: 132
+            wrapText: null
+            displayFormat: null
+        columnOrdering: null
+        customColumnOrdering: null
+        pinnedColumns: null
+        hiddenColumns: null
+        pinIndexColumns: false
+        showAggregations: false
+        columnAggregations: null
+  - cellType: CODE
+    cellId: cf171153-c477-4840-9427-fdebbfe7bb0e # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        output_table = pd.DataFrame()
+
+
+        if fuzzy_match_now: 
+
+            list(csv2_original.columns)
+  - cellType: CODE
+    cellId: 48aa9cb4-c6fa-498d-8d50-b07fed59ab83 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        if fuzzy_match_now: 
+
+            total_cols = np.size(csv1_original,1) + np.size(csv2_original,1)
+            output_table = pd.DataFrame(np.zeros((len(match_table),total_cols)),columns=list(csv1_original.columns) + list(csv2_original.columns))
+
+            for ii in range(len(match_table)):
+                print(ii)
+                tmp1 = list(csv1_original[csv1_original.iloc[:,0] == match_table.source_1_id[ii]].iloc[0,:])
+                tmp2 = list(csv2_original[csv2_original.iloc[:,0] == match_table.source_2_id[ii]].iloc[0,:])
+                tmp_concat = tmp1 + tmp2
+                output_table.iloc[ii,:] = tmp_concat
+  - cellType: MARKDOWN
+    cellId: e783b1ff-0786-4988-bcf8-0691fa82f3bb # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: "The table below has additional columns preserved:"
+  - cellType: TABLE_DISPLAY
+    cellId: c13bb9f5-6193-4370-95e9-c0bdd5d7f0d7 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      dataFrameVariableName: output_table
+      resultVariable: table_result_2
+      tableDisplayConfig:
+        pageSize: 50
+        height: 241
+        hideIcons: false
+        hideIndex: false
+        defaultSortColumn: null
+        defaultSortIndexColumn: null
+        defaultSortDirection: ASC
+        conditionalFormatting: null
+        calcs: null
+        filters: null
+        columnProperties:
+          - originalName: address
+            renameTo: null
+            size: 147
+            wrapText: null
+            displayFormat: null
+          - originalName: address2
+            renameTo: null
+            size: 189
+            wrapText: null
+            displayFormat: null
+          - originalName: another_col
+            renameTo: null
+            size: 115
+            wrapText: null
+            displayFormat: null
+          - originalName: city
+            renameTo: null
+            size: 117
+            wrapText: null
+            displayFormat: null
+          - originalName: city2
+            renameTo: null
+            size: 110
+            wrapText: null
+            displayFormat: null
+          - originalName: extra_col
+            renameTo: null
+            size: 101
+            wrapText: null
+            displayFormat: null
+          - originalName: hello
+            renameTo: null
+            size: 78
+            wrapText: null
+            displayFormat: null
+          - originalName: hi
+            renameTo: null
+            size: 62
+            wrapText: null
+            displayFormat: null
+          - originalName: id
+            renameTo: null
+            size: 78
+            wrapText: null
+            displayFormat: null
+          - originalName: id2
+            renameTo: null
+            size: 70
+            wrapText: null
+            displayFormat: null
+          - originalName: name
+            renameTo: null
+            size: 102
+            wrapText: null
+            displayFormat: null
+          - originalName: name2
+            renameTo: null
+            size: 89
+            wrapText: null
+            displayFormat: null
+          - originalName: row-index-0
+            renameTo: null
+            size: 24
+            wrapText: null
+            displayFormat: null
+          - originalName: someother
+            renameTo: null
+            size: 110
+            wrapText: null
+            displayFormat: null
+          - originalName: zip
+            renameTo: null
+            size: 70
+            wrapText: null
+            displayFormat: null
+          - originalName: zip2
+            renameTo: null
+            size: 75
+            wrapText: null
+            displayFormat: null
+        columnOrdering: null
+        customColumnOrdering: null
+        pinnedColumns: null
+        hiddenColumns: null
+        pinIndexColumns: false
+        showAggregations: false
+        columnAggregations: null
+  - cellType: CODE
+    cellId: 9e30e6fe-e370-4f8d-b29c-76e246e444a9 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |-
+        # if 1:
+        #     print("Running FuzzyTrees..")
+        #     start_time = time.time()  # capture start time
+        #     total_vso_ids = len(csv2)
+        #     match_table = pd.DataFrame(np.zeros((len(csv1),11)),columns=['source_1_id', 'source_1_name', 'source_1_city', 'source_1_address', 'source_1_zip', 'source_2_id', 'source_2_name', 'source_2_city', 'source_2_address', 'source_2_zip','total_score'])
+        #     table_idx = 0
+        #     # Specify data types
+        #     data_types = {
+        #         'id': int,
+        #         'name': object,
+        #         'city': object,
+        #         'address': object,
+        #         'zip': int,
+        #         # 'id2': int,
+        #         # 'name2': object,
+        #         # 'city2': object,
+        #         # 'address2': object,
+        #         # 'zip2': int
+        #     }
+
+        #     for ii in range(1):
+        #         update_loading_bar(ii, len(csv1)-1)
+        #         tmp_csv1_df = csv1.iloc[ii,:]
+        #         # Repeat the row N times
+        #         duplicates = pd.concat([tmp_csv1_df]*total_vso_ids, axis=1).transpose()
+        #         # Append duplicates to the original DataFrame
+        #         tmp_csv1_df = pd.concat([duplicates], ignore_index=True)
+
+        #         tmp_csv1_df = tmp_csv1_df.astype(data_types)
+        #         tmp_merged_df_original = pd.concat([tmp_csv1_df,csv2.reset_index(drop=True)],axis=1)
+        #         tmp_merged_df = tmp_merged_df_original.copy(deep=True)
+        #         # tmp_merged_df = tmp_merged_df.astype(data_types)
+
+        #         tmp_merged_df.loc[:, tmp_merged_df.dtypes == 'object'] = tmp_merged_df.select_dtypes(['object']).apply(lambda x: x.str.lower())
+        #         tmp_merged_df.loc[:, tmp_merged_df.dtypes == 'object'] = tmp_merged_df.select_dtypes(['object']).apply(lambda x: x.str.replace('[ ,-]', '', regex=True))
+        #         tmp_merged_df.loc[:, tmp_merged_df.dtypes == 'object'] = tmp_merged_df.select_dtypes(['object']).apply(lambda x: x.str.replace('[&]', 'and', regex=True))
+
+
+        #         lev_features = ['name_lev_dist','city_lev_dist','address_lev_dist','zip_lev_dist'] 
+        #         jaro_features = ['name_jaro_dist','city_jaro_dist','address_jaro_dist','zip_jaro_dist']
+        #         tmp_merged_df = generate_feature_vectors(lev_features,tmp_merged_df,levenshtein_distance)
+        #         tmp_merged_df = generate_feature_vectors(jaro_features,tmp_merged_df,jaro_winkler_distance)
+        #         columns_features = ['name_lev_dist','city_lev_dist','address_lev_dist','zip_lev_dist','name_jaro_dist','city_jaro_dist','address_jaro_dist','zip_jaro_dist']
+        #         tmp_merged_df['total_score'] = tmp_merged_df.loc[:,columns_features].sum(axis=1)
+        #         columns_features = ['name_lev_dist','city_lev_dist','address_lev_dist','zip_lev_dist','name_jaro_dist','city_jaro_dist','address_jaro_dist','zip_jaro_dist','total_score']
+
+        #         feature_df = tmp_merged_df.loc[:,columns_features]
+        #         X = np.array(feature_df)  # Features
+
+        #         y_pred = random_forest_classifier.predict(X)
+
+        #         indices = np.where(y_pred == 1)[0]
+        #         if len(indices) != 0:
+        #             tmp_df2 = tmp_merged_df.loc[indices,columns_features]
+        #             tmp_df2['summed'] = tmp_df2.sum(axis=1)
+        #             max_index = tmp_df2['summed'].idxmax()
+
+        #             match_table.iloc[table_idx,0:10] = tmp_merged_df_original.iloc[int(max_index),0:10]
+        #             match_table.iloc[table_idx,10] = tmp_merged_df.loc[int(max_index),'total_score']
+        #             table_idx += 1    
+        #         else:
+        #             pass  
+
+        #     match_table = match_table.loc[~(match_table==0).all(axis=1)]
+        #     end_time = time.time()  # capture end time
+        #     elapsed_time_seconds = end_time - start_time  # total time in seconds
+        #     elapsed_time_minutes = elapsed_time_seconds / 60  # convert seconds to minutes
+
+        #     print(f"\n Elapsed time: {np.round(elapsed_time_minutes,2)} minutes")
+        # #     # match_table = match_table[match_table['total_score']>7]
+  - cellType: CODE
+    cellId: ebe9728d-1bdf-4323-aab1-d0747fd071d7 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: "# tmp_merged_df.sort_values(by='total_score',ascending=False)"
+  - cellType: CODE
+    cellId: a75860a8-0d09-4a67-9ed4-beab4c543f98 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: |+
+        # update_loading_bar(ii, len(csv1)-1)
+        # tmp_csv1_df = csv1.iloc[ii,:]
+        # # Repeat the row N times
+        # duplicates = pd.concat([tmp_csv1_df]*total_vso_ids, axis=1).transpose()
+        # # Append duplicates to the original DataFrame
+        # tmp_csv1_df = pd.concat([duplicates], ignore_index=True)
+
+        # # tmp_csv1_df = tmp_csv1_df.astype(data_types)
+        # tmp_merged_df_original = pd.concat([tmp_csv1_df,csv2.reset_index(drop=True)],axis=1)
+        # tmp_merged_df = tmp_merged_df_original.copy(deep=True)
+        # # tmp_merged_df = tmp_merged_df.astype(data_types)
+        # tmp_merged_df
+
+  - cellType: CODE
+    cellId: 783e5933-2df9-4636-a645-1739e2e33440 # DO NOT CHANGE - Hex uses this to match up cells when reimporting the file, and detect any changes to existing cells
+    cellLabel: null
+    config:
+      source: "# csv2"
+appLayout:
+  visibleMetadataFields:
+    - NAME
+    - DESCRIPTION
+    - AUTHOR
+    - LAST_EDITED
+    - LAST_RUN
+    - CATEGORIES
+    - STATUS
+    - TABLE_OF_CONTENTS
+  fullWidth: false
+  tabs:
+    - name: Tab 1
+      rows:
+        - columns:
+            - start: 0
+              end: 30
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: a8b4997e-7a54-48ae-a91e-ffffd2d8c53e
+                  sharedFilterId: null
+                  height: 100
+                  showLabel: true
+            - start: 30
+              end: 60
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: 6de2c4c9-0c01-4c49-98cf-58b7c257b320
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+            - start: 60
+              end: 90
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: 0f8837be-aaf7-46f3-a4fa-c606db8ff3b7
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+            - start: 90
+              end: 120
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: dca8ae19-79ba-4d05-ab91-7bea5587870d
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+        - columns:
+            - start: 0
+              end: 120
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: 8c602356-7a20-438d-a7ee-5fe67e9b6af1
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+        - columns:
+            - start: 0
+              end: 120
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: ab5b4e4a-2653-416b-b64b-b81ebe85b473
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+        - columns:
+            - start: 0
+              end: 120
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: 9902257b-4ce9-44d6-a433-eacea34b5b03
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+        - columns:
+            - start: 0
+              end: 120
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: e783b1ff-0786-4988-bcf8-0691fa82f3bb
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+        - columns:
+            - start: 0
+              end: 120
+              elements:
+                - showSource: false
+                  hideOutput: false
+                  type: CELL
+                  cellId: c13bb9f5-6193-4370-95e9-c0bdd5d7f0d7
+                  sharedFilterId: null
+                  height: null
+                  showLabel: true
+sharedFilters: []
