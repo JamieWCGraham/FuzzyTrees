@@ -5,3 +5,7 @@ FuzzyTrees is a machine-learning application built in Python and Hex that combin
 
 For all pairs of records in two tables, FuzzyTrees computes similarity metrics on shared fields (name, city, address, zip) using the <a href='https://en.wikipedia.org/wiki/Levenshtein_distance'>Levenshtein distance</a> and <a href='https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance'>Jaro-Winkler distance</a>. These similarity metrics are 
 used for feature engineering for the random forest classifier algorithm. Scanning over duplicate VSS practices, FuzzyTrees finds the best approximate match in the table of VSO practices--providing a base mapping for systematic deduplication. 
+
+![image](https://github.com/user-attachments/assets/7b93cc79-6190-4a97-b09e-bb2d3d710b80)
+
+![image](https://github.com/user-attachments/assets/877b911d-ca0c-4947-baf2-a6b2237b1825)
