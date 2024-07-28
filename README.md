@@ -6,9 +6,11 @@ FuzzyTrees is a machine-learning application built in Python and Hex that combin
 For all pairs of records in two tables, FuzzyTrees computes similarity metrics on shared fields (name, city, address, zip) using the <a href='https://en.wikipedia.org/wiki/Levenshtein_distance'>Levenshtein distance</a> and <a href='https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance'>Jaro-Winkler distance</a>. These similarity metrics are 
 used for feature engineering for the random forest classifier algorithm. Scanning over duplicate VSS practices, FuzzyTrees finds the best approximate match in the table of VSO practices--providing a base mapping for systematic deduplication. 
 
+## Example
+
+
 ![image](https://github.com/user-attachments/assets/f7922de9-630d-48f3-8009-d670eeb33094)
 
-## Example
 
 Here is an example, the first row here is a matched pair of VSO and VSS practices. On the right of the table, on van view engineered similarity features, taking the Levenshtein and Jaro-Winkler-similarity measures (known as distances) with the name, city, address, and zip fields from the VSO and VSS practices, respectively. We take these 'fuzzy' similarity measures because we can't do an exact matching process for these records since the fields aren't exactly identical (one VSS practice may spell their address with "St.", the VSO practice spelling that same duplicated practice with "Street" instead). The specific distances have slightly different use cases--Jaro-Winkler is best for name matching, and texts with similar prefixes. Levenshtein is good for short texts, and for spelling corrections/typos.
 
