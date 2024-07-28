@@ -26,3 +26,8 @@ A base dataset of 128K pairs of practices was used, 4.4% of which represent true
 ![image](https://github.com/user-attachments/assets/7b93cc79-6190-4a97-b09e-bb2d3d710b80)
 
 ![image](https://github.com/user-attachments/assets/877b911d-ca0c-4947-baf2-a6b2237b1825)
+
+## UI/UX in Hex
+
+![image](https://github.com/user-attachments/assets/245a790a-2656-4f79-8c40-c5736d4e00a3)
+
